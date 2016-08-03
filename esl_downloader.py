@@ -35,7 +35,7 @@ def download(url,path=download_path):
             if res.status_code == 200:
                 with open(src_path,"wb") as f:
                     logger.info("Starting download %s to %s" % (url,src_path))
-                    with gevent.Timeout(600) as timeout:
+                    with gevent.Timeout(900):
                         for chunk in res.iter_content(chunk_size=1024):
                             if chunk:
                                 f.write(chunk)
@@ -44,6 +44,8 @@ def download(url,path=download_path):
                     break
         except Exception ,e:
             logger.error("Exception msg: %s" % str(e))
+        except gevent.Timeout as t:
+            logger.error("Timeout msg: %s,url :%s" % (str(t),url))
         logger.error("Failed to download %s. Try again..." % url)
         count += 1
         if count > 5:
