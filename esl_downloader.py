@@ -35,11 +35,11 @@ def download(url,path=download_path):
             if res.status_code == 200:
                 with open(src_path,"wb") as f:
                     logger.info("Starting download %s to %s" % (url,src_path))
-                    for chunk in res.iter_content(chunk_size=1024):
-                        if chunk:
-                            f.write(chunk)
-                            f.flush()
-                    f.close()
+                    with gevent.Timeout(600) as timeout:
+                        for chunk in res.iter_content(chunk_size=1024):
+                            if chunk:
+                                f.write(chunk)
+                                f.flush()
                     logger.info("Finished download %s." % url)
                     break
         except Exception ,e:
